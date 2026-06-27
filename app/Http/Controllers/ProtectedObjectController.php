@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProtectedObject;
 use Illuminate\Http\Request;
+use App\Models\Camera;
 
 class ProtectedObjectController extends Controller
 {
@@ -12,7 +13,14 @@ class ProtectedObjectController extends Controller
      */
     public function index()
     {
-        //
+        $objects = ProtectedObject::with('camera')
+            ->latest()
+            ->get();
+
+        return view(
+            'protected-objects.index',
+            compact('objects')
+        );
     }
 
     /**
@@ -20,7 +28,12 @@ class ProtectedObjectController extends Controller
      */
     public function create()
     {
-        //
+        $cameras = Camera::all();
+
+        return view(
+            'protected-objects.create',
+            compact('cameras')
+        );
     }
 
     /**
@@ -28,7 +41,22 @@ class ProtectedObjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'camera_id' => 'required',
+            'name' => 'required'
+        ]);
+
+        ProtectedObject::create([
+            'camera_id' => $request->camera_id,
+            'name' => $request->name,
+        ]);
+
+        return redirect()
+            ->route('protected-objects.index')
+            ->with(
+                'success',
+                'Protected Object Created'
+            );
     }
 
     /**
