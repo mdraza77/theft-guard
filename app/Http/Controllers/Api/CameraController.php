@@ -16,7 +16,7 @@ class CameraController extends Controller
         $cameras = Camera::where(
             'user_id',
             auth()->id()
-        )->latest()->get();
+        )->get();
 
         return response()->json([
             'success' => true,

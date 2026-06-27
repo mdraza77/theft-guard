@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Alert;
+use Illuminate\Support\Facades\Auth;
 
-class AlertController extends Controller
+class AuthController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,21 +21,7 @@ class AlertController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            // 'camera_id' => 'required|exists:cameras,id',
-            'event_type' => 'required',
-        ]);
-
-        $alert = Alert::create([
-            'camera_id' => $request->camera_id,
-            'event_type' => $request->event_type,
-            'message' => $request->message,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'data' => $alert,
-        ]);
+        //
     }
 
     /**
@@ -60,5 +46,28 @@ class AlertController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (!Auth::attempt($credentials)) {
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
+        }
+
+        $user = Auth::user();
+
+        $token = $user->createToken('python-client')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user' => $user
+        ]);
     }
 }
