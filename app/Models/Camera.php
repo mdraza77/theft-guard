@@ -8,10 +8,16 @@ class Camera extends Model
 {
     protected $fillable = [
         'name',
+        'user_id',
         'source_type',
         'stream_url',
         'status'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function alerts()
     {

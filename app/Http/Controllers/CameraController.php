@@ -12,7 +12,10 @@ class CameraController extends Controller
      */
     public function index()
     {
-        $cameras = Camera::latest()->get();
+        $cameras = Camera::where(
+            'user_id',
+            auth()->id()
+        )->latest()->get();
 
         return view('cameras.index', compact('cameras'));
     }
@@ -36,6 +39,7 @@ class CameraController extends Controller
         ]);
 
         Camera::create([
+            'user_id' => auth()->id(),
             'name' => $request->name,
             'source_type' => $request->source_type,
             'stream_url' => $request->stream_url,
