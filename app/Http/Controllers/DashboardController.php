@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Camera;
+use App\Models\Alert;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $totalCameras = Camera::count();
+        $totalAlerts = Alert::count();
+        return view('dashboard', compact('totalCameras', 'totalAlerts'));
+    }
+}

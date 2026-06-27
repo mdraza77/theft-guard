@@ -1,15 +1,17 @@
 <?php
 
+use App\Http\Controllers\AlertController;
+use App\Http\Controllers\CameraController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProtectedObjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -17,4 +19,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::resource('cameras', CameraController::class);
+Route::resource('alerts', AlertController::class);
+Route::resource('protected-objects', ProtectedObjectController::class);
+
+Route::get('/test-alert', function () {
+
+    \App\Models\Alert::create([
+        'camera_id' => 1,
+        'event_type' => 'Motion Detected',
+        'message' => 'Movement detected near bike'
+    ]);
+
+    return 'Alert Created';
+});
+
+require __DIR__ . '/auth.php';
